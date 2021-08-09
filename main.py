@@ -20,7 +20,9 @@ RENDER_ENV = False
 # Use Gym Monitor
 GYM_MONITOR_EN = True
 # Gym environment
-ENV_NAME = 'Pong-v0'
+ENV_NAME = 'CartPole-v0'
+
+
 # Directory for storing gym results
 MONITOR_DIR = './results/gym_ddpg'
 # Directory for storing tensorboard summary results
@@ -153,7 +155,7 @@ def train(sess, env, option_critic):  # , critic):
 
             current_state = env.reset()  # note I'm using only one step, original uses 4
             current_state = state_processor.process(sess, current_state)
-            current_state = np.stack([current_state] * 4, axis=2)
+            current_state = np.stack([current_state] * 4, axis=1)
             current_option = 0
             current_action = 0
             new_option = np.argmax(option_critic.predict(current_state))
@@ -293,14 +295,15 @@ def set_up_gym():
 
     env = gym.make(ENV_NAME)
     env.seed(RANDOM_SEED)
+    print("Env", vars(env))
 
-    if GYM_MONITOR_EN:
-        if not RENDER_ENV:
-            env = wrappers.Monitor(
-                env, MONITOR_DIR, video_callable=None, force=True
-            )
-        else:
-            env = wrappers.Monitor(env, MONITOR_DIR, force=True)
+    # if GYM_MONITOR_EN:
+    #     if not RENDER_ENV:
+    #         env = wrappers.Monitor(
+    #             env, MONITOR_DIR, video_callable=None, force=True
+    #         )
+    #     else:
+    #         env = wrappers.Monitor(env, MONITOR_DIR, force=True)
 
     env.reset()
     return env
@@ -336,4 +339,5 @@ def main(_):
 
 if __name__ == '__main__':
     env = set_up_gym()
+    print("ENVIRONMENT")
     tf.app.run()

@@ -17,13 +17,13 @@ class OptionsNetwork(object):
 
         # State Network
         self.inputs = tf.placeholder(
-            shape=[None, 84, 84, 4], dtype=tf.uint8, name="inputs")
-        scaled_image = tf.to_float(self.inputs) / 255.0
+            shape=[4], dtype=tf.float16, name="inputs")
+        scaled_image = self.inputs
         self.next_inputs = tf.placeholder(
-            shape=[None, 84, 84, 4],
-            dtype=tf.uint8,
+            shape=[4],
+            dtype=tf.float16,
             name="next_inputs")
-        next_scaled_image = tf.to_float(self.next_inputs) / 255.0
+        next_scaled_image = self.next_inputs
         with tf.variable_scope("state_out") as scope:
             self.state_out = self.apply_state_model(scaled_image)
             scope.reuse_variables()
@@ -40,10 +40,10 @@ class OptionsNetwork(object):
 
         # Prime Network
         self.target_inputs = tf.placeholder(
-            shape=[None, 84, 84, 4],
-            dtype=tf.uint8,
+            shape=[4],
+            dtype=tf.float16,
             name="target_inputs")
-        target_scaled_image = tf.to_float(self.target_inputs) / 255.0
+        target_scaled_image = self.target_inputs
         self.target_state_out_holder = self.create_state_network(
             target_scaled_image)
         with tf.variable_scope("target_q_out") as target_q_scope:
@@ -181,8 +181,8 @@ class OptionsNetwork(object):
         with tf.variable_scope("input"):
             output = self.state_model(
                 input_image,
-                [[8, 8, 4, 32], [4, 4, 32, 64], [3, 3, 64, 64]],
-                [[3136, 512]])
+                [[1], [1], [1]],
+                [[1, 1]])
         return output
 
     def apply_q_model(self, input):
@@ -277,6 +277,7 @@ class OptionsNetwork(object):
         return net
 
     def predict(self, inputs):
+        # print("INPUT SHAPE",input.shape)
         return self.sess.run(self.Q_out, feed_dict={
             self.inputs: [inputs]
         })
