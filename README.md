@@ -19,3 +19,10 @@ git clone git@github.com:yadrimz/option-critic.git
 - tensorflow-1.1.0
 - python 2.7
 - gym[atari]
+
+# Installation
+Run
+
+```bash
+pip install -r requirements.txt
+```
